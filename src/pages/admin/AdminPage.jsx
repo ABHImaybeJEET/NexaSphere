@@ -3,6 +3,7 @@ import DashboardStats from '../../components/admin/analytics/DashboardStats';
 import UserGrowthChart from '../../components/admin/analytics/UserGrowthChart';
 import EventAttendanceChart from '../../components/admin/analytics/EventAttendanceChart';
 import '../../components/admin/analytics/analytics.css';
+import socketClient from '../../utils/socketClient';
 
 export default function AdminPage({ onBack }) {
   const [loading, setLoading] = useState(false);
@@ -183,8 +184,7 @@ export default function AdminPage({ onBack }) {
 
     sseClient.addEventListener('login', (event) => {
       try {
-        const parsed = JSON.parse(event.data);
-        console.log(`SSE Login Alert: User ${parsed.data.username} connected from ${parsed.data.ip}`);
+        JSON.parse(event.data);
       } catch (err) {
         console.error('Failed to parse login SSE message:', err);
       }
@@ -224,6 +224,7 @@ export default function AdminPage({ onBack }) {
     localStorage.removeItem('ns_admin_token');
     setToken(null);
     setData({ stats: null, growth: [], events: [] });
+    socketClient.destroySocket();
   };
 
   if (!token) {
